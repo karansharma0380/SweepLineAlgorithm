@@ -1,0 +1,33 @@
+
+
+
+
+Soln:
+
+class MyCalendarTwo {
+    Map<Integer, Integer> treeMap;
+    
+    public MyCalendarTwo() {
+        treeMap = new TreeMap<>();
+    }
+    
+    public boolean book(int start, int end) {
+        treeMap.put(start,treeMap.getOrDefault(start,0)+1); // map[start]++
+        treeMap.put(end,treeMap.getOrDefault(end,0)-1); // map[end]--
+        
+        int sum=0;
+        
+        for(Integer key: treeMap.keySet()){
+            sum+=treeMap.get(key);
+            
+            if(sum>=3){ //Only this changed i.e. the num of booking we can consider
+                treeMap.put(start,treeMap.get(start)-1);
+                treeMap.put(end,treeMap.get(end)+1);
+                
+                return false;
+            }
+        }
+        
+        return true;
+    }
+}
