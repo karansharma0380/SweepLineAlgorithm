@@ -41,7 +41,7 @@ class MyCalendar {
         
         int sum=0;
         
-        for(Integer key: treeMap.keySet()){ //By this we are not letting the sum of any time go above 1. 
+        for(int key: treeMap.keySet()){ //By this loop we are not letting the sum of any time go above 1. 
             sum+=treeMap.get(key);
             
             if(sum>1){

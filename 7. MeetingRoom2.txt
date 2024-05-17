@@ -1,0 +1,31 @@
+Leetcode 253
+Ques: Given an array of meeting time intervals intervals where intervals[i] = [starti, endi], return the minimum number of conference rooms required.
+
+Example 1:
+
+Input: intervals = [[0,30],[5,10],[15,20]]
+Output: 2
+Example 2:
+
+Input: intervals = [[7,10],[2,4]]
+Output: 1
+
+Soln: Very easy Line sweep algorithm. Just want the maximum collision/intersecting points.
+
+
+class Solution {
+    public int minMeetingRooms(int[][] intervals) {
+        Map<Integer, Integer> map = new TreeMap<>();
+        for(int[] interval : intervals){
+            map.put(interval[0], map.getOrDefault(interval[0], 0)+1);
+            map.put(interval[1], map.getOrDefault(interval[1], 0)-1);
+        }
+        int rooms=0;
+	int maxRoom = 0;
+        for(int time : map.keySet()){
+            rooms+=map.get(time);
+            maxRoom=Math.max(maxRoom, rooms);
+        }
+        return maxRoom;
+    }
+}
