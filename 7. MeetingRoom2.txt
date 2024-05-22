@@ -2,16 +2,19 @@ Leetcode 253
 Ques: Given an array of meeting time intervals intervals where intervals[i] = [starti, endi], return the minimum number of conference rooms required.
 
 Example 1:
-
 Input: intervals = [[0,30],[5,10],[15,20]]
 Output: 2
-Example 2:
 
+Example 2:
 Input: intervals = [[7,10],[2,4]]
 Output: 1
 
-Soln: Very easy Line sweep algorithm. Just want the maximum collision/intersecting points.
+Soln: Very easy Line sweep algorithm. Just want the maximum collision/intersection points.
 
+Like Suppose there are 2 intersection points means time of two meetings is clashing. so we need two different
+rooms for that meeting. and if there is no intersection between two meeting time then we can re use the room for
+other time. 
+That's why we need this. 
 
 class Solution {
     public int minMeetingRooms(int[][] intervals) {

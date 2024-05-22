@@ -1,0 +1,57 @@
+Leetcode 435
+Ques: Given an array of intervals intervals where intervals[i] = [starti, endi], return the minimum number of intervals you need to remove to make the rest of the intervals non-overlapping.
+
+Example 1:
+Input: intervals = [[1,2],[2,3],[3,4],[1,3]]
+Output: 1
+Explanation: [1,3] can be removed and the rest of the intervals are non-overlapping.
+
+Example 2:
+Input: intervals = [[1,2],[1,2],[1,2]]
+Output: 2
+Explanation: You need to remove two [1,2] to make the rest of the intervals non-overlapping.
+
+Example 3:
+Input: intervals = [[1,2],[2,3]]
+Output: 0
+Explanation: You don't need to remove any of the intervals since they're already non-overlapping.
+
+Soln: 
+
+In many of the problem above we do sorting with endTime , this is an important concept to understand,
+if you sort with endTime and then check other intervals you can easily find non-overlapping intervals like this, here prev is previous interval.
+
+if(intervals[i][0] < intervals[prev][1])
+Reason is if a new interval start is before previous end time that means a sure overlap.
+While on the other hand if we sort by startTime, we dont know when this interval gonna end, there will be overlaps.
+Here are some additional points to consider:
+
+Sorting by end time is a greedy algorithm. This means that it makes the best possible choice at each step, without considering the future. As a result, it is usually more efficient than sorting by start time.
+Sorting by start time is a dynamic programming algorithm. This means that it makes a choice at each step, based on the choices that it has made in the past. As a result, it is usually more robust to errors in the input data.
+
+
+class Solution {
+    public int eraseOverlapIntervals(int[][] intervals) {
+        
+        // sorting by endtime would be more beneficial in this case
+
+        // 1. this problem can be solved using by sorting starttime also but in that case we have to apply DP because now we have choices for each interval
+
+        // 2. by sorting with endtime we can now greedily define what interval would overlap and what would not.
+        Arrays.sort(intervals, (a, b) -> Integer.compare(a[1], b[1]));
+        
+        int prev = intervals[0][1]; //First interval
+        int numOfIntervalToBeRemoved = 1; 
+        
+        for(int i=1;i<intervals.length;i++){ // We are counting the intervals which are not overlapping
+            if(intervals[i][0]>=prev){
+                numOfIntervalToBeRemoved++;
+                prev=intervals[i][1];
+            }
+        }
+        
+        return intervals.length - numOfIntervalToBeRemoved //Substract it from the total interval to get overlapping ones;
+    }
+}
+
+

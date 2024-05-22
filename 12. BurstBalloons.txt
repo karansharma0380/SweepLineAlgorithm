@@ -1,0 +1,122 @@
+Leetcode 452
+Ques: There are some spherical balloons taped onto a flat wall that represents the XY-plane. The balloons are represented as a 2D integer array points where points[i] = [xstart, xend] denotes a balloon whose horizontal diameter stretches between xstart and xend. You do not know the exact y-coordinates of the balloons.
+
+Arrows can be shot up directly vertically (in the positive y-direction) from different points along the x-axis. A balloon with xstart and xend is burst by an arrow shot at x if xstart <= x <= xend. There is no limit to the number of arrows that can be shot. A shot arrow keeps traveling up infinitely, bursting any balloons in its path.
+
+Given the array points, return the minimum number of arrows that must be shot to burst all balloons.
+
+Example 1:
+Input: points = [[10,16],[2,8],[1,6],[7,12]]
+Output: 2
+Explanation: The balloons can be burst by 2 arrows:
+- Shoot an arrow at x = 6, bursting the balloons [2,8] and [1,6].
+- Shoot an arrow at x = 11, bursting the balloons [10,16] and [7,12].
+
+Example 2:
+Input: points = [[1,2],[3,4],[5,6],[7,8]]
+Output: 4
+Explanation: One arrow needs to be shot for each balloon for a total of 4 arrows.
+
+Example 3:
+Input: points = [[1,2],[2,3],[3,4],[4,5]]
+Output: 2
+Explanation: The balloons can be burst by 2 arrows:
+- Shoot an arrow at x = 2, bursting the balloons [1,2] and [2,3].
+- Shoot an arrow at x = 4, bursting the balloons [3,4] and [4,5].
+
+Soln: 
+
+Consider this example.
+
+Input: points = [[10,16],[2,8],[1,6],[7,12]]
+Output: 2
+Explanation: The balloons can be burst by 2 arrows:
+- Shoot an arrow at x = 6, bursting the balloons [2,8] and [1,6].
+- Shoot an arrow at x = 11, bursting the balloons [10,16] and [7,12].
+
+Soln:
+
+
+ graphical illustration
+    [[10,16],[2,8],[1,6],[7,12]]
+ Shoot an arrow at x = 6, bursting the balloons [2,8] and [1,6].
+ Shoot an arrow at x = 11, bursting the balloons [10,16] and [7,12]
+
+ if the distance of a line that is in the direction of y axis to the center of a circle is less than the radius of that circle, that line passes the circle and burst the baloon. as the center of [2,8] lies on x=5, the min distance between x=6 is 1, which is less than the radius 3, so x = 6 can burst [2,8]. Instead the center of [7,12] lies on x = 9.5, the distance between x=6 is 3.5, which is larger than the radius 2.5, so x=6 can't burst it. So, if the x value of the arrow falls in the range of the diameter, it can burst the balloon. Meanwhile, if the diameter arrays of two balloon collapse with each other, they can be bursted by one arrow. So we can convert the question into - how many minimum combined array we can have for the question array.
+
+    |         *    
+    |         *  [2,8]              
+    |         *             。[7,12]
+    |  ****************     。
+    |         *             。           +
+    |         *             。           + [10,16]
+    |         *       。。。。。。。。。  +
+    |       x               。           +                                    
+    |       x               。  ++++++++++++++++++++
+    |       x               。           +
+    |xxxxxxxxxxxxxxxx       。           +
+    |       x                            +
+    |       x    [1,6]                   +
+     _  _  _x_  _  _  _  _  _  _  _  _  _  _  _  _  _  _  
+     1  2  3  4  5  6  7  8  9  10 11 12 13 14 15 16 17 18
+
+
+
+
+the example can be visualized as 
+        [1     6]
+          [2       8]
+                 [7      12]
+                     [10        16]
+        if we want to cover first range, we have to draw a line from x = 6
+        we can check how many ranges this line can pass and remove those ranges
+        we will start from the next range which can't be covered by this line.
+
+
+Now if we strike first ballon , we can strike at the end-most point i.e. 6.
+
+We save this as prev = 6
+Any ballon starting point before we don't need extra arraow since this arrow is enough to burst the ballon.
+
+The moment start point > prev , we know we need a new arrow again we save the end-most point in the prev and repeat the process.
+Many problem can be solved using this technique.
+
+
+class Solution {
+    public int findMinArrowShots(int[][] points) {
+        
+        //Sorting array based on their end points
+        Arrays.sort(points, (a, b) -> Integer.compare(a[1], b[1]));
+        
+        int prev_end = points[0][1];
+        int numOfArrows = 1; //prev = points[0][1] we bursting balloon at the end of the first balloon so 1 arrow 				needed
+        
+        for(int i=1; i<points.length;i++){
+            int curr_start = points[i][0]; // starting point of the next balloon.
+            if(curr_start >prev_end){  // if the starting point of next balloon is greater(means ahead) of ending
+					// point of the previous balloon.
+                numOfArrows++;
+                prev_end = points[i][1]; // prev like point where we last burst the balloon
+            }
+        }
+        
+        return numOfArrows;
+    }
+}
+
+
+
+In many of the problem above we do sorting with endTime , this is an important concept to understand,
+if you sort with endTime and then check other intervals you can easily find non-overlapping intervals like this, here prev is previous interval.
+
+if(intervals[i][0] < intervals[prev][1])
+Reason is if a new interval start is before previous end time that means a sure overlap.
+While on the other hand if we sort by startTime, we dont know when this interval gonna end, there will be overlaps.
+Here are some additional points to consider:
+
+Sorting by end time is a greedy algorithm. This means that it makes the best possible choice at each step, without considering the future. As a result, it is usually more efficient than sorting by start time.
+Sorting by start time is a dynamic programming algorithm. This means that it makes a choice at each step, based on the choices that it has made in the past. As a result, it is usually more robust to errors in the input data.
+
+
+
+
